@@ -11,9 +11,25 @@
 <!-- <script src="Promise自定义封装.js"></script> -->
 <script>
 
-
-
-
+function deepClone (obj) {
+  // 对常见的“非”值，直接返回原来值
+  if([null, c, NaN, false].includes(obj)) return obj;
+  // 不是对象类型直接返回
+  if(typeof obj !== "object" && typeof obj !== 'function') return obj;
+  // 判断是否为一个数组
+  let copyObj = Object.prototype.toString.call(obj) === '[object Array]' ? [] : {};
+  for(let i in obj) {
+    // Object的hasOwnProperty()方法返回一个布尔值，判断对象是否包含特定的自身（非继承）属性。
+    if(obj.hasOwnProperty(i)) {
+      // 判断如果是对象递归
+      copyObj[i] = typeof obj[i] === "object" ? deepClone(obj[i]) : obj[i];
+    }
+  }
+  return copyObj;
+}
+let arr = ['111', {a: 'a', b: 'b'}, 222];
+let obj = {name: '蕾姆', age: '18', desc: [1, 2], o: {a: 'a', b: 'b'}};
+console.log( deepClone(NaN) )
 
 
   // let p1 = new MyPromise((resolve, reject) => {
