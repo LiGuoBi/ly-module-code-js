@@ -71,26 +71,26 @@
   function show(el, type) {
     el.style.display = 'block';
     if (type == 1) { // transform
-        el.style.transform = 'translateY(100%)';
-        setTimeout(function() {
-            el.style.transform = 'translateY(0%)';
-        }, 100);
+      el.style.transform = 'translateY(100%)';
+      setTimeout(function() {
+        el.style.transform = 'translateY(0%)';
+      }, 100);
     } else if (type == 2) { //  opacity
-        el.style.opacity = 0;
-        setTimeout(function() {
-            el.style.opacity = 1;
-        }, 100);
+      el.style.opacity = 0;
+      setTimeout(function() {
+        el.style.opacity = 1;
+      }, 100);
     }
   }
 
   function hide(el, type) {
     if (type == 1) { // transform
-        el.style.transform = 'translateY(100%)';
+      el.style.transform = 'translateY(100%)';
     } else if (type == 2) { //  opacity
-        el.style.opacity = 0;
+      el.style.opacity = 0;
     }
     setTimeout(function() {
-        el.style.display = 'none';
+      el.style.display = 'none';
     }, 600);
   }
 

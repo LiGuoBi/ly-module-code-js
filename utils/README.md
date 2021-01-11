@@ -1,70 +1,127 @@
-# 常用函数
+# 常用函数目录
 
-- 目录
-  - [防抖](#防抖)
-  - [节流](#节流)
+- [防抖和节流](./防抖和节流.md)
+- [ajax封装](#ajax封装)
+- [对象深度克隆](#对象深度克隆)
+- [show&hide元素节点显示隐藏](#show&hide元素节点显示隐藏)
 
-## 防抖
-
-防抖：任务频繁触发的情况下，只有任务触发的间隔超过指定间隔的时候，任务才会执行。
-
-``` js
-/**
- * 防抖原理：一定时间内，只有最后一次操作，再过wait毫秒后才执行函数
- * @author 小炜 2021-01-11
- * @param {Function} func - 回调函数
- * @param {Number} wait 延时的时间 默认500毫秒
- * @return {undefined}
- */
-let timeout = null;
-function debounce(func, wait = 500) {
-  // 清除定时器
-  clearTimeout(timeout);
-  // 设置定时器，当最后一次操作后，timeout不会再被清除，所以在延时wait毫秒后执行func回调方法
-  timeout = setTimeout(function() {
-    typeof func === 'function' && func();
-  }, wait);
-}
-// 调用防抖函数
-debounce(function() {
-  console.log("防抖成功！");
-})
-```
-
-## 节流
+## ajax封装
 
 ```js
 /**
- * 节流原理：在一定时间内，只能触发一次
- * @param {Function} func 要执行的回调函数 
- * @param {Number} wait 延时的时间
- * @param {Boolean} immediate 是否立即执行
+ * ajax
+ * @param {Object} options 
+ * @param {String} options.url 请求地址
+ * @param {String} options.type 请求类型 GET(默认)|POST
+ * @param {Object} options.data 请求参数
+ * @param {Object} options.dataType 响应数据的类型 默认json
+ * @param {Function} options.success 成功的回调函数
+ * @param {Function} options.fail 失败的回调函数 
  * @return null
  */
-let flag;
-function throttle(func, wait = 500, immediate = true) {
-  if (immediate) {
-    if (!flag) {
-      flag = true;
-      // 如果是立即执行，则在wait毫秒开始前执行
-      typeof func === 'function' && func();
-      setTimeout(() => {
-        flag = false;
-      }, wait);
+function ajax(options = {}) {
+  options.type = (options.type || "GET").toUpperCase();
+  options.dataType = options.dataType || "json";
+  // 格式化参数
+  function formatParams(data) {
+    let arr = [];
+    for (let name in data) {
+      arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
     }
-  } else {
-    if (!flag) {
-      flag = true;
-      // 如果是非立即执行，则在wait毫秒结束处执行
-      setTimeout(() => {
-        flag = false
-        typeof func === 'function' && func();
-      }, wait);
+    return arr.join("&");
+  }
+  let params = formatParams(options.data);
+
+  // 1.创建 XMLHttpRequest 对象
+  let xhr = new XMLHttpRequest();
+  // 判断请求类型
+  if (options.type == "GET") {
+    // 2.初始化设置请求方法和url
+    xhr.open("GET", options.url + "?" + params, true);
+    // 3.发送
+    xhr.send(null);
+  } else if (options.type == "POST") {
+    xhr.open("POST", options.url, true);
+    // 设置请求头
+    // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(params);
+  }
+  // 设置返回响应数据的类型。
+  xhr.responseType = options.dataType;
+  // 4.事件绑定 处理服务端返回的结果
+  xhr.onreadystatechange = function () {
+    /* 
+      readyState 状态码
+      0 代理被创建，但尚未调用 open() 方法。
+      1 open() 方法已经被调用。
+      2 send() 方法已经被调用，并且头部和状态已经可获得。
+      3 响应体部分正在被接收。
+      4 请求操作已经完成。数据传输已经彻底完成或失败。
+    */
+    if (xhr.readyState == 4) {
+      let status = xhr.status;
+      // 判断返回响应状态码 200
+      if (status >= 200 && status < 300) {
+        // response 响应返回的数据
+        options.success && options.success(xhr.response);
+      } else {
+        options.fail && options.fail(status);
+      }
     }
   }
 }
 // 调用
-throttle(function() {
-  console.log("节流成功！");
+ajax({
+  url: "",
+  type: "POST",
+  data: { name: "super", age: 20 },
+  dataType: "json",
+  success: function (response) {
+    // 此处放成功后执行的代码
+  },
+  fail: function (status) {
+    // 此处放失败后执行的代码
+  }
 });
+```
+
+## 对象深度克隆
+
+```js
+
+```
+
+## show&hide元素节点显示隐藏
+
+```js
+/**
+ * 节流原理：在一定时间内，只能触发一次
+ * @param {Object} el 需要显示/隐藏的节点 
+ * @param {Number} type 显示/隐藏方式 1 = translateY，2 = opacity
+ * @return null
+ */
+function show(el, type) {
+  el.style.display = 'block';
+  if (type == 1) { // transform
+    el.style.transform = 'translateY(100%)';
+    setTimeout(function() {
+      el.style.transform = 'translateY(0%)';
+    }, 100);
+  } else if (type == 2) { //  opacity
+    el.style.opacity = 0;
+    setTimeout(function() {
+      el.style.opacity = 1;
+    }, 100);
+  }
+}
+function hide(el, type) {
+  if (type == 1) { // transform
+    el.style.transform = 'translateY(100%)';
+  } else if (type == 2) { //  opacity
+    el.style.opacity = 0;
+  }
+  setTimeout(function() {
+    el.style.display = 'none';
+  }, 600);
+}
 ```

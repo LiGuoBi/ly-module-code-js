@@ -4,8 +4,8 @@
 //   return new Promise(() => {})
 // })
 
-// 
-class MyPromise {
+// 学习版 https://www.bilibili.com/video/BV1GA411x7z1
+class Promise {
   // 构造函数传入一个函数
   constructor(executor) {
     // 添加属性
@@ -60,16 +60,16 @@ class MyPromise {
       }
     }
     // 返回Promise实现链式调用
-    return new MyPromise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       // 改变Promise的状态
       let change = (fn) => {
         try {
           // 获取回调函数的执行结果，函数默认返回 undefined
-          // 根据回调函数返回的结果去改变MyPromise的状态
+          // 根据回调函数返回的结果去改变Promise的状态
           let result = fn(this.PromiseResult);
           // 判断是否是Promise对象
-          if (result instanceof MyPromise) {
-            // 是MyPromise对象调用then
+          if (result instanceof Promise) {
+            // 是Promise对象调用then
             // result.then(v => resolve(v), r => reject(r)); // 传入箭头函数调用resolve, reject方法
             result.then(resolve, reject); // 直接传入resolve (成功), reject (失败) 
           } else {
@@ -109,17 +109,18 @@ class MyPromise {
 
     })
   }
+
   // 添加catch方法
   catch(onRejected) {
     return this.then(undefined, onRejected);
   }
 
   // 添加 resolve 静态方法，resolve是类的方法，不是实例
-  // 传入的值不是MyPromise对象，返回成功的MyPromise对象，是跟随传入的MyPromise对象返回
+  // 传入的值不是Promise对象，返回成功的Promise对象，是跟随传入的Promise对象返回
   static resolve(value) {
-    return new MyPromise((resolve, reject) => {
-      // 判断value是否是一个MyPromise对象
-      if (value instanceof MyPromise) {
+    return new Promise((resolve, reject) => {
+      // 判断value是否是一个Promise对象
+      if (value instanceof Promise) {
         // 是Promise对象调用then
         value.then(resolve, reject); // 直接传入resolve (成功), reject (失败) 
       } else {
@@ -130,32 +131,32 @@ class MyPromise {
   }
 
   // 添加 reject 静态方法
-  // 返回一个失败的MyPromise
+  // 返回一个失败的Promise
   static reject(reason) {
-    return new MyPromise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       reject(reason)
     })
   }
 
   // 添加 all 静态方法
-  // 传入一个 MyPromise 数组，
-  // 全部MyPromise对象为成功返回成功的MyPromise对象
-  // 有一个失败返回失败的MyPromise对象
+  // 传入一个 Promise 数组，
+  // 全部Promise对象为成功返回成功的Promise对象
+  // 有一个失败返回失败的Promise对象
   static all(promises) {
-    return new MyPromise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       let count = 0; // 统计成功的数量
-      let resArr = []; // MyPromise对象成功的结果，存入数组中
-      // 循环获取MyPromise对象的结果
+      let resArr = []; // Promise对象成功的结果，存入数组中
+      // 循环获取Promise对象的结果
       promises.forEach((item, i) => {
         item.then(res => {
           count++;
           resArr[i] = res;
-          // count等于数组长度，全部成功修改MyPromise对象状态为成功
+          // count等于数组长度，全部成功修改Promise对象状态为成功
           if (count === promises.length) {
             resolve(resArr)
           }
         }, err => {
-          // 有一个失败修改MyPromise对象状态为失败
+          // 有一个失败修改Promise对象状态为失败
           reject(err)
         })
       })
@@ -163,9 +164,9 @@ class MyPromise {
   }
 
   // 添加 race 静态方法
-  // 传入一个 MyPromise 数组，返回的MyPromise对象状态和结果由MyPromise数组中最先改变状态的MyPromise决定
+  // 传入一个 Promise 数组，返回的Promise对象状态和结果由Promise数组中最先改变状态的Promise决定
   static race(promises) {
-    return new MyPromise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       promises.forEach((item) => {
         item.then(resolve, reject)
       })
