@@ -10,28 +10,88 @@
 <!-- <script src="ajax.js"></script> -->
 <!-- <script src="Promise自定义封装.js"></script> -->
 <script>
+  function deepClone (obj) {
+    // 对常见的“非”值，直接返回原来值
+    if([null, undefined, NaN, false].includes(obj)) return obj;
+    // 不是对象类型直接返回
+    if(typeof obj !== "object" && typeof obj !== 'function') return obj;
+    // 判断是否为一个数组
+    let copyObj = Object.prototype.toString.call(obj) === '[object Array]' ? [] : {};
+    for(let i in obj) {
+      // 防止拿到原型链属性
+      if(obj.hasOwnProperty(i)) {
+        // 判断如果是对象递归
+        copyObj[i] = typeof obj[i] === "object" ? deepClone(obj[i]) : obj[i];
+      }
+    }
+    return copyObj;
+  }
 
-function deepClone (obj) {
-  // 对常见的“非”值，直接返回原来值
-  if([null, c, NaN, false].includes(obj)) return obj;
-  // 不是对象类型直接返回
-  if(typeof obj !== "object" && typeof obj !== 'function') return obj;
-  // 判断是否为一个数组
-  let copyObj = Object.prototype.toString.call(obj) === '[object Array]' ? [] : {};
-  for(let i in obj) {
-    // Object的hasOwnProperty()方法返回一个布尔值，判断对象是否包含特定的自身（非继承）属性。
-    if(obj.hasOwnProperty(i)) {
-      // 判断如果是对象递归
-      copyObj[i] = typeof obj[i] === "object" ? deepClone(obj[i]) : obj[i];
+  // JS对象深度合并
+  function deepMerge(target = {}, source = {}) {
+    target = deepClone(target); // 深度拷贝
+    if (typeof target !== 'object' || typeof source !== 'object') return false;
+    for (let prop in source) {
+      // 如果是原型链上的属性跳过
+      if (!source.hasOwnProperty(prop)) continue;
+      // if(key in obj) 意思是 obj 中是否有 key 属性 ，有 true， 没有 false，包含原型链上的属性
+      if (prop in target) {
+        if (typeof target[prop] !== 'object' || typeof source[prop] !== 'object') {
+          // 要合并的两个属性有一个不是对象，直接赋值
+          target[prop] = deepClone(source[prop]);
+        } else {
+          // 要合并的两个属性是对象，递归合并
+          target[prop] = deepMerge(target[prop], source[prop]);
+        }
+      } else {
+        // 没有直接赋值
+        target[prop] = deepClone(source[prop]);
+      }
+    }
+    return target;
+  }
+
+
+  let a = {
+    info: {
+      name: 'mary',
+      text: {
+        sex: '女'
+      },
+      concat: {0: '零', 1: '一'}
     }
   }
-  return copyObj;
-}
-let arr = ['111', {a: 'a', b: 'b'}, 222];
-let obj = {name: '蕾姆', age: '18', desc: [1, 2], o: {a: 'a', b: 'b'}};
-console.log( deepClone(NaN) )
 
+  let b = {
+    info: {
+      age: '22',
+      text: {
+        name: '1',
+        sex: '男'
+      },
+      concat: 2
+    },
+    o: {
+      a: 'a',
+      b: 'b'
+    }
+  }
 
+  // 使用Object.assign进行合并，注意此时a被修改了
+  let c = Object.assign(a, b);
+  // let c = deepMerge(a, b);
+  console.log(a)
+  console.log(b)
+  c.o.a = 'aaa'
+  c.info.text.name = '小炜'
+  console.log(c)
+
+  // console.log(a.concat)
+
+  // console.log(Number(new Date()))
+  // console.log(Date.now())
+
+  
   // let p1 = new MyPromise((resolve, reject) => {
   //   setTimeout(() => {
   //     resolve('伊卡洛斯')

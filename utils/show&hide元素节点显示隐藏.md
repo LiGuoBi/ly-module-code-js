@@ -2,7 +2,7 @@
 
 ```js
 /**
- * 节流原理：在一定时间内，只能触发一次
+ * 元素节点显示隐藏
  * @param {Object} el 需要显示/隐藏的节点 
  * @param {Number} type 显示/隐藏方式 1 = translateY，2 = opacity
  * @return null
