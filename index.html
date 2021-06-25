@@ -6,67 +6,9 @@
   <title>Document</title>
 </head>
 <body>
-
+<div style="height: 2000px;"></div>
 <!-- <script src="ajax.js"></script> -->
-<script src="手写Promise/Promise.js"></script>
 <script>
-  
-  let p1 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve('伊卡洛斯')
-      // reject('哎呀，失败了')
-    }, 1000)
-  })
-
-  p1.then(res => {
-    console.log('success', res)
-    return new Promise((resolve, reject) => {
-      setTimeout(() =>{
-        reject('失败')
-      }, 1000)
-    })
-  }, err => {
-    console.log('error', err)
-  }).then(res => {
-    console.log(res)
-  })
-  
-
-  // // let p2 = MyPromise.reject('蕾姆')
-  // let p2 = new MyPromise((resolve, reject) => {
-  //   setTimeout(() => {
-  //     resolve('蕾姆')
-  //   }, 1000)
-  // })
-
-  // let p3 = new MyPromise((resolve, reject) => {
-  //   // setTimeout(() => {
-  //     resolve('阿帕斯')
-  //   // }, 1000)
-  // })
-
-  // let res = MyPromise.race([p1, p2, p3])
-  // res.then(res => {
-  //   console.log('success:', res)
-  // }, err => {
-  //   console.log('error:', err)
-  // });
-  // console.log(res)
-
-  /* new MyPromise((resolve, reject) => {
-    // setTimeout(() => {
-      resolve('伊卡洛斯')
-      console.log('1111')
-    // }, 2000)
-  }).then(res => {
-    console.log('2222')
-  }, err => {
-    console.log('3333')
-  })
-  console.log('4444') */
-
-
-  
 
 
 </script>
